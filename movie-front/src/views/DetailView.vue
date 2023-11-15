@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>여기는 메인 홈페이지</h1>
+    <h1>여기는 디테일</h1>
   </div>
 </template>
 
@@ -11,8 +11,8 @@ import { useAccountStore } from '@/stores/accounts'
 const store = useAccountStore()
 
 onMounted(() => {
-  store.verify()
   // store.refresh()
+  store.verify()
 })
 </script>
 

@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAccountStore } from '@/stores/accounts'
 import HomeView from '@/views/HomeView.vue'
-import SignUp from '@/views/SignUp.vue'
-import Login from '@/views/Login.vue'
+import SignUpView from '@/views/SignUpView.vue'
+import LogInView from '@/views/LogInView.vue'
+import DetailView from '@/views/DetailView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,23 +15,33 @@ const router = createRouter({
     },
     {
       path: '/signup',
-      name: 'signup',
-      component: SignUp
+      name: 'SignUpView',
+      component: SignUpView
     },
     {
       path: '/login',
-      name: 'login',
-      component: Login
+      name: 'LogInView',
+      component: LogInView
     },
-    // {
-    //   path: '/about',
-    //   name: 'about',
-    //   // route level code-splitting
-    //   // this generates a separate chunk (About.[hash].js) for this route
-    //   // which is lazy-loaded when the route is visited.
-    //   component: () => import('../views/AboutView.vue')
-    // }
+    {
+      path: '/detail',
+      name: 'DetailView',
+      component: DetailView
+    },
   ]
+})
+
+// 비로그인 사용자의 메인 페이지 접근 제한
+router.beforeEach((to, from) => {
+  const store = useAccountStore()
+  if (to.name === 'home' && !store.isLogin) {
+    window.alert('로그인 해주세요.')
+    return { name: 'LogInView' }
+  }
+  if ((to.name === 'SignUpView' || to.name === 'LogInView') && (store.isLogin)) {
+    window.alert('이미 로그인했습니다.')
+    return { name: 'home' }
+  }
 })
 
 export default router
