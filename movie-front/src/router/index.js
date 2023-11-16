@@ -24,7 +24,7 @@ const router = createRouter({
       component: LogInView
     },
     {
-      path: '/detail',
+      path: '/detail/:id',
       name: 'DetailView',
       component: DetailView
     },
@@ -32,16 +32,16 @@ const router = createRouter({
 })
 
 // 비로그인 사용자의 메인 페이지 접근 제한
-router.beforeEach((to, from) => {
-  const store = useAccountStore()
-  if (to.name === 'home' && !store.isLogin) {
-    window.alert('로그인 해주세요.')
-    return { name: 'LogInView' }
-  }
-  if ((to.name === 'SignUpView' || to.name === 'LogInView') && (store.isLogin)) {
-    window.alert('이미 로그인했습니다.')
-    return { name: 'home' }
-  }
-})
+// router.beforeEach((to, from) => {
+//   const store = useAccountStore()
+//   if (to.name === 'home' && !store.isLogin) {
+//     window.alert('로그인 해주세요.')
+//     return { name: 'LogInView' }
+//   }
+//   if ((to.name === 'SignUpView' || to.name === 'LogInView') && (store.isLogin)) {
+//     window.alert('이미 로그인했습니다.')
+//     return { name: 'home' }
+//   }
+// })
 
 export default router
