@@ -89,9 +89,10 @@
                     elevation="24"
                     color="primary"
                     show-adjacent-months
+                    v-model="today"
                   ></v-date-picker>
                   <v-btn
-                    @click.prevent="dateDialog = false"
+                    @click.prevent="dateBtnClick"
                     class="my-4"
                     color="primary"
                     height="40"
@@ -135,17 +136,22 @@ import { useAccountStore } from '@/store/accounts'
 import { useDate } from 'vuetify'
 import axios from 'axios'
 
+// 회원가입 1단계 변수들
 const username = ref(null)
 const email = ref(null)
 const password = ref(null)
 const password2 = ref(null)
-const birth = ref(null)
-const gender = ref(null)
 const otp = ref('')
 const dialog = ref(false)
+let emailPass = ''
+
+// 회원가입 2단계 변수들
+const birth = ref(null)
+const gender = ref(null)
 const dateDialog = ref(false)
 const date = useDate()
-let emailPass = ''
+const today = ref(null)
+
 const store = useAccountStore()
 
 const emailCheck = () => {
@@ -173,7 +179,7 @@ const secondaryConfirm = () => {
 
     axios({
       method: 'post',
-      url: `${API_URL}/api/confirm/`,
+      url: `${store.API_URL}/api/confirm/`,
       data: {
         uidb64: otp.value,
         username: username.value
@@ -222,7 +228,12 @@ const signUp = () => {
 
 const dateSelect = () => {
   console.log('셀렉터 클릭!')
-  console.log(date.getMonth(new Date('March 1, 2021')))
+  console.log(date.getMonth(new Date(today)))
+}
+
+const dateBtnClick = () => {
+  console.log(date.getMonth(new Date(today)))
+  dateDialog.value = false
 }
 </script>
 
