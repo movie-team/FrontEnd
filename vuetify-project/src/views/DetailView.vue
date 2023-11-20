@@ -56,22 +56,24 @@ const rating = ref(3)
 const review = ref(null)
 
 onMounted(() => {
-  // store.refresh()
-  store.verify()
   axios({
     method: 'get',
     url: `${movieStore.API_URL}/api/movies/${route.params.id}/`
   })
-    .then((res) => {
-      console.log('디테일 조회 완료')
-      console.log(res)
-      movie.value = res.data
-    })
-    .catch((err) => {
-      console.log('디테일 조회 실패')
-      console.log(err)
-    })
-    movieStore.reviewList(route.params.id)
+  .then((res) => {
+    console.log('디테일 조회 완료')
+    console.log(res)
+    movie.value = res.data
+  })
+  .catch((err) => {
+    console.log('디테일 조회 실패')
+    console.log(err)
+  })
+  movieStore.reviewList(route.params.id)
+
+  // 토큰 유효성
+  store.verify()
+  store.kakaoRefresh()
 })
 
 const reviewBtnClick = (movieId) => {

@@ -21,9 +21,20 @@ const store = useAccountStore()
 const movieStore = useMovieStore()
 
 onMounted(() => {
-  store.verify()
-  // store.refresh()
   movieStore.getMovies()
+  
+  // 카카오 로그인 후 url에 들어온 토큰 받기
+  const urlSearch = new URLSearchParams(location.search)
+  console.log('urlSearch는?')
+  console.log(urlSearch)
+  console.log(urlSearch.size)
+  if (urlSearch.size > 0) {
+    store.kakaoLogin(urlSearch)
+  }
+  
+  // 토큰 유효성
+  store.verify()
+  store.kakaoRefresh()
 })
 </script>
 

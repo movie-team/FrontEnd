@@ -10,6 +10,8 @@ export const useAccountStore = defineStore('account', () => {
   // const API_URL = 'https://6d5f-223-38-29-153.ngrok-free.app'
   const a_token = ref(null)
   const r_token = ref(null)
+  const ka_token = ref(null)
+  const kr_token = ref(null)
   const router = useRouter()
 
   // 이메일 인증
@@ -116,9 +118,22 @@ export const useAccountStore = defineStore('account', () => {
       })
   }
 
+  // 카카오 회원가입 또는 로그인
+  const kakaoLogin = function(urlSearch) {
+    console.log('새로고침할 때마다 여기가 바뀌면 안돼')
+    console.log(VueCookies.get('kaccess'))
+    console.log(VueCookies.get('krefresh'))
+    if (VueCookies.get('kaccess') === null && VueCookies.get('krefresh') === null) {
+      ka_token.value = urlSearch.get('a')
+      kr_token.value = urlSearch.get('r')
+      VueCookies.set('kaccess', ka_token.value, '30M')
+      VueCookies.set('krefresh', kr_token.value, '7d')
+    }
+  }
+
   // 사용자 로그인 여부 확인
   const isLogin = computed(() => {
-    if (a_token.value === null) {
+    if (VueCookies.get('access') === null && VueCookies.get('kaccess') === null) {
       return false
     } else {
       return true
@@ -127,24 +142,51 @@ export const useAccountStore = defineStore('account', () => {
 
   // 로그아웃
   const logOut = function() {
-    axios({
-      method: 'post',
-      url: `${API_URL}/api/logout/`,
-      headers: {
-        Authorization: `Bearer ${a_token.value}`
-      }
-    })
+    if (VueCookies.get('kaccess') === null) {
+      axios({
+        method: 'post',
+        url: `${API_URL}/api/logout/`,
+        headers: {
+          Authorization: `Bearer ${VueCookies.get('access')}`
+        }
+      })
       .then((res) => {
         console.log('로그아웃 성공?')
         console.log(res)
-        a_token.value = null
-        r_token.value = null
-        VueCookies.remove('access')
-        VueCookies.remove('refresh')
       })
       .catch((err) => {
+        console.log('일반 로그아웃으로 들어가?')
         console.log(err)
       })
+
+    } else {
+      console.log('토큰 어디갔어')
+      console.log(VueCookies.get('kaccess'))
+      axios({
+        method: 'post',
+        url: `${API_URL}/accounts/kakao/logout/`,
+        // headers: {
+        //   Authorization: `Bearer ${VueCookies.get('kaccess')}`
+        // }
+        data: {
+          'access': VueCookies.get('kaccess')
+        }
+      })
+        .then((res) => {
+          console.log('카카오 로그아웃 성공?')
+          console.log(res)
+        })
+        .catch((err) => {
+          console.log('카카오 로그아웃 실패ㅠㅠ')
+          console.log(err)
+        })
+    }
+
+    // 쿠키 초기화
+    VueCookies.remove('access')
+    VueCookies.remove('refresh')
+    VueCookies.remove('kaccess')
+    VueCookies.remove('krefresh')
   }
 
   // refresh 토큰 재발급
@@ -164,7 +206,7 @@ export const useAccountStore = defineStore('account', () => {
         console.log(res.data)
         a_token.value = res.data.access
         r_token.value = res.data.refresh
-        VueCookies.set('access', a_token.value, '30m')
+        VueCookies.set('access', a_token.value, '30M')
         VueCookies.set('refresh', r_token.value, '7d')
       })
       .catch((err) => {
@@ -195,8 +237,39 @@ export const useAccountStore = defineStore('account', () => {
       })
   }
 
+  // 카카오 토큰 재발급
+  const kakaoRefresh = function() {
+    // ka_token.value = VueCookies.get('access')
+    kr_token.value = VueCookies.get('krefresh')
+    console.log('쿠키에 저장된 토큰은?')
+    console.log(VueCookies.get('kaccess'))
+    console.log(VueCookies.get('krefresh'))
+    axios({
+      method: 'post',
+      url: `${API_URL}/accounts/kakao/refresh/`,
+      // headers: {
+      //   Authorization: `Bearer ${kr_token.value}`
+      // },
+      data: {
+        'refresh': kr_token.value
+      }
+    })
+      .then((res) => {
+        console.log('카카오 토큰 재발급')
+        console.log(res.data)
+        if (res.data.error === null) {
+          console.log('지금 여기는 못 들어오잖아?')
+          VueCookies.set('kaccess', res.data.access_token, '30M')
+        }
+      })
+      .catch((err) => {
+        console.log('카카오 토큰 재발급 실패ㅠㅠ')
+        console.log(err)
+      })
+  }
+
   return {
     API_URL, signUp, logIn, a_token, r_token, isLogin, logOut, refresh,
-    verify, emailCheck
+    verify, emailCheck, kakaoLogin, kakaoRefresh
   }
 }, { persist: true })
