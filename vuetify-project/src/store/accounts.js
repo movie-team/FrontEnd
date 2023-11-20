@@ -7,19 +7,67 @@ import { useRouter } from 'vue-router'
 export const useAccountStore = defineStore('account', () => {
   // 인스턴스 및 변수들
   const API_URL = 'http://127.0.0.1:8000'
+  // const API_URL = 'https://6d5f-223-38-29-153.ngrok-free.app'
   const a_token = ref(null)
   const r_token = ref(null)
   const router = useRouter()
 
+  // 이메일 인증
+  const emailCheck = function(payload) {
+    console.log('이메일 스토어 접근!')
+    const { email, username } = payload
+    console.log(email)
+
+    axios({
+      method: 'post',
+      url: `${API_URL}/api/emailVerify/`,
+      data: {
+        email, username
+      }
+    })
+      .then((res) => {
+        console.log('이메일 인증 정상 통신!')
+        console.log(res)
+      })
+      .catch((err) => {
+        console.log('이메일 통신 실패ㅠㅠ')
+        console.log(err)
+      })
+  }
+
+  // 이메일 인증 후 인증번호 확인
+  // const secondaryConfirm = function(payload) {
+  //   const { uidb64, username } = payload
+  //   console.log('인증번호 확인 store로 이동!')
+  //   console.log(uidb64)
+
+  //   axios({
+  //     method: 'post',
+  //     url: `${API_URL}/api/confirm/`,
+  //     data: {
+  //       uidb64, username
+  //     }
+  //   })
+  //     .then((res) => {
+  //       console.log('인증번호 확인까지 성공!')
+  //       console.log(res.data)
+  //       console.log(res.data.message)
+  //     })
+  //     .catch((err) => {
+  //       console.log('인증번호 확인은 실패ㅠㅠ')
+  //       console.log(err)
+  //     })
+  // }
+
   // 회원가입
   const signUp = function(payload) {
-    const { username, email, password, password2 } = payload
+    const { username, email, password, password2, birth, gender } = payload
     
     axios({
       method: 'post',
       url: `${API_URL}/api/signup/`,
       data: {
-        username, email, password, password2
+        username, email, password, password2, birth, gender
       }
     })
       .then((res) => {
@@ -91,6 +139,8 @@ export const useAccountStore = defineStore('account', () => {
         console.log(res)
         a_token.value = null
         r_token.value = null
+        VueCookies.remove('access')
+        VueCookies.remove('refresh')
       })
       .catch((err) => {
         console.log(err)
@@ -114,6 +164,8 @@ export const useAccountStore = defineStore('account', () => {
         console.log(res.data)
         a_token.value = res.data.access
         r_token.value = res.data.refresh
+        VueCookies.set('access', a_token.value, '30m')
+        VueCookies.set('refresh', r_token.value, '7d')
       })
       .catch((err) => {
         console.log(err)
@@ -145,6 +197,6 @@ export const useAccountStore = defineStore('account', () => {
 
   return {
     API_URL, signUp, logIn, a_token, r_token, isLogin, logOut, refresh,
-    verify
+    verify, emailCheck
   }
 }, { persist: true })
