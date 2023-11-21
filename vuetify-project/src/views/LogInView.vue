@@ -46,7 +46,7 @@ const logIn = () => {
 <style scoped>
 .login-container {
   width: 40%;
-  height: 80vh;
+  height: 60vh;
   border: 1px solid #ccc;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);

@@ -58,30 +58,6 @@ export const useAccountStore = defineStore('account', () => {
       })
   }
 
-  // 이메일 인증 후 인증번호 확인
-  // const secondaryConfirm = function(payload) {
-  //   const { uidb64, username } = payload
-  //   console.log('인증번호 확인 store로 이동!')
-  //   console.log(uidb64)
-
-  //   axios({
-  //     method: 'post',
-  //     url: `${API_URL}/api/confirm/`,
-  //     data: {
-  //       uidb64, username
-  //     }
-  //   })
-  //     .then((res) => {
-  //       console.log('인증번호 확인까지 성공!')
-  //       console.log(res.data)
-  //       console.log(res.data.message)
-  //     })
-  //     .catch((err) => {
-  //       console.log('인증번호 확인은 실패ㅠㅠ')
-  //       console.log(err)
-  //     })
-  // }
-
   // 회원가입
   const signUp = function(payload) {
     const { username, email, password, password2, birth, gender, first_name, last_name } = payload
@@ -98,8 +74,12 @@ export const useAccountStore = defineStore('account', () => {
         console.log(res.data)
 
         // 회원가입 후 로그인까지 진행
-        // const password = password1
-        // logIn({ email, password })
+        // const password = password
+        const payload = {
+          username: username,
+          password: password
+        }
+        logIn(payload)
       })
       .catch((err) => {
         console.log(err)
@@ -176,17 +156,22 @@ export const useAccountStore = defineStore('account', () => {
       .then((res) => {
         console.log('로그아웃 성공?')
         console.log(res)
+
+        // 쿠키 초기화
+        VueCookies.remove('access')
+        VueCookies.remove('refresh')
+        VueCookies.remove('kaccess')
+        VueCookies.remove('krefresh')
+
+        // 로그아웃 후 메인 페이지로 이동
+        router.push({ name: 'home' })
+        alert('로그아웃 했습니다.')
       })
       .catch((err) => {
         console.log('일반 로그아웃으로 들어가?')
         console.log(err)
       })
 
-      // 쿠키 초기화
-      VueCookies.remove('access')
-      VueCookies.remove('refresh')
-      VueCookies.remove('kaccess')
-      VueCookies.remove('krefresh')
     } else {
       console.log('토큰 어디갔어')
       console.log(VueCookies.get('kaccess'))
@@ -199,25 +184,6 @@ export const useAccountStore = defineStore('account', () => {
       VueCookies.remove('krefresh')
 
       document.location.href = `${API_URL}/accounts/kakao/signout/`
-
-      // axios({
-      //   method: 'post',
-      //   url: `${API_URL}/accounts/kakao/signout/`,
-      //   // headers: {
-      //   //   Authorization: `Bearer ${VueCookies.get('access')}`
-      //   // },
-      //   data: {
-      //     'refresh': VueCookies.get('refresh')
-      //   }
-      // })
-      //   .then((res) => {
-      //     console.log('카카오 로그아웃 성공?')
-      //     console.log(res)
-      //   })
-      //   .catch((err) => {
-      //     console.log('카카오 로그아웃 실패ㅠㅠ')
-      //     console.log(err)
-      //   })
     }
   }
 
