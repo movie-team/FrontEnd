@@ -12,7 +12,28 @@ export const useAccountStore = defineStore('account', () => {
   const r_token = ref(null)
   const ka_token = ref(null)
   const kr_token = ref(null)
+  const username = ref(null)
   const router = useRouter()
+
+  // 프로필 조회
+  const profile = function() {
+    axios({
+      method: 'get',
+      url: `${API_URL}/api/`,
+      headers: {
+        Authorization: `Bearer ${VueCookies.get('access')}`
+      }
+    })
+      .then((res) => {
+        console.log('프로필 조회 완료!')
+        console.log(res)
+        username.value = res.data.username
+      })
+      .catch((err) => {
+        console.log('프로필 조회 실패ㅠㅠ')
+        console.log(err)
+      })
+  }
 
   // 이메일 인증
   const emailCheck = function(payload) {
@@ -63,13 +84,13 @@ export const useAccountStore = defineStore('account', () => {
 
   // 회원가입
   const signUp = function(payload) {
-    const { username, email, password, password2, birth, gender } = payload
+    const { username, email, password, password2, birth, gender, first_name, last_name } = payload
     
     axios({
       method: 'post',
       url: `${API_URL}/api/signup/`,
       data: {
-        username, email, password, password2, birth, gender
+        username, email, password, password2, birth, gender, first_name, last_name
       }
     })
       .then((res) => {
@@ -124,10 +145,12 @@ export const useAccountStore = defineStore('account', () => {
     console.log(VueCookies.get('kaccess'))
     console.log(VueCookies.get('krefresh'))
     if (VueCookies.get('kaccess') === null && VueCookies.get('krefresh') === null) {
-      ka_token.value = urlSearch.get('a')
-      kr_token.value = urlSearch.get('r')
+      ka_token.value = urlSearch.get('k_a')
+      kr_token.value = urlSearch.get('k_r')
       VueCookies.set('kaccess', ka_token.value, '30M')
       VueCookies.set('krefresh', kr_token.value, '7d')
+      VueCookies.set('access', urlSearch.get('a'), '30M')
+      VueCookies.set('refresh', urlSearch.get('r'), '7d')
     }
   }
 
@@ -159,34 +182,43 @@ export const useAccountStore = defineStore('account', () => {
         console.log(err)
       })
 
+      // 쿠키 초기화
+      VueCookies.remove('access')
+      VueCookies.remove('refresh')
+      VueCookies.remove('kaccess')
+      VueCookies.remove('krefresh')
     } else {
       console.log('토큰 어디갔어')
       console.log(VueCookies.get('kaccess'))
-      axios({
-        method: 'post',
-        url: `${API_URL}/accounts/kakao/logout/`,
-        // headers: {
-        //   Authorization: `Bearer ${VueCookies.get('kaccess')}`
-        // }
-        data: {
-          'access': VueCookies.get('kaccess')
-        }
-      })
-        .then((res) => {
-          console.log('카카오 로그아웃 성공?')
-          console.log(res)
-        })
-        .catch((err) => {
-          console.log('카카오 로그아웃 실패ㅠㅠ')
-          console.log(err)
-        })
-    }
+      r_token.value = VueCookies.get('refresh')
 
-    // 쿠키 초기화
-    VueCookies.remove('access')
-    VueCookies.remove('refresh')
-    VueCookies.remove('kaccess')
-    VueCookies.remove('krefresh')
+      // 쿠키 초기화
+      VueCookies.remove('access')
+      VueCookies.remove('refresh')
+      VueCookies.remove('kaccess')
+      VueCookies.remove('krefresh')
+
+      document.location.href = `${API_URL}/accounts/kakao/signout/`
+
+      // axios({
+      //   method: 'post',
+      //   url: `${API_URL}/accounts/kakao/signout/`,
+      //   // headers: {
+      //   //   Authorization: `Bearer ${VueCookies.get('access')}`
+      //   // },
+      //   data: {
+      //     'refresh': VueCookies.get('refresh')
+      //   }
+      // })
+      //   .then((res) => {
+      //     console.log('카카오 로그아웃 성공?')
+      //     console.log(res)
+      //   })
+      //   .catch((err) => {
+      //     console.log('카카오 로그아웃 실패ㅠㅠ')
+      //     console.log(err)
+      //   })
+    }
   }
 
   // refresh 토큰 재발급
@@ -247,9 +279,9 @@ export const useAccountStore = defineStore('account', () => {
     axios({
       method: 'post',
       url: `${API_URL}/accounts/kakao/refresh/`,
-      // headers: {
-      //   Authorization: `Bearer ${kr_token.value}`
-      // },
+      headers: {
+        Authorization: `Bearer ${VueCookies.get('access')}`
+      },
       data: {
         'refresh': kr_token.value
       }
@@ -270,6 +302,6 @@ export const useAccountStore = defineStore('account', () => {
 
   return {
     API_URL, signUp, logIn, a_token, r_token, isLogin, logOut, refresh,
-    verify, emailCheck, kakaoLogin, kakaoRefresh
+    verify, emailCheck, kakaoLogin, kakaoRefresh, profile, username
   }
 }, { persist: true })
