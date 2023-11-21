@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="store.reviews">
     <ReviewItem
       v-for="review in store.reviews"
       :key="review.id"

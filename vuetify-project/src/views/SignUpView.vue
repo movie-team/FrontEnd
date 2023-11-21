@@ -7,11 +7,11 @@
       alt-labels
       prev-text="이전 단계"
       next-text="다음 단계"
-      :items="['Step 1', 'Step 2']"
+      :items="['Step 1', 'Step 2', 'Step 3']"
     >
       <!-- 회원가입 1단계 -->
       <template v-slot:item.1>
-        <v-card title="필수 단계" flat>
+        <v-card title="필수 입력 1단계" flat>
           <p>사용할 아이디와 이메일을 입력하세요</p>
           <label for="username">아이디 : </label>
           <input type="text" id="username" v-model.trim="username" placeholder="아이디"><br>
@@ -75,9 +75,9 @@
 
       <!-- 회원가입 2단계 -->
       <template v-slot:item.2>
-        <v-card title="선택 단계" flat>
+        <v-card title="필수 입력 2단계" flat>
           <label for="birth">생일 :
-            <input @click.prevent="dateSelect" type="text" id="birth" placeholder="생일" :value="birth"><br>
+            <input type="text" id="birth" placeholder="생일" :value="birth"><br>
             <v-dialog
               v-model="dateDialog"
               activator="parent"
@@ -108,6 +108,16 @@
           <label for="gender">성별 : </label><br>
           <span>&nbsp;&nbsp;남자&nbsp;&nbsp;&nbsp;</span><input type="radio" name="gender" v-model.trim="gender" value="True"><br>
           <span>&nbsp;&nbsp;여자&nbsp;&nbsp;&nbsp;</span><input type="radio" name="gender" v-model.trim="gender" value="False"><br>
+        </v-card>
+      </template>
+
+      <template v-slot:item.3>
+        <v-card title="선택 입력 단계" flat>
+          <label for="firstName">이름 : </label>
+          <input type="text" id="firstName" v-model.trim="first_name" placeholder="이름을 입력해주세요"><br>
+
+          <label for="lastName">성 : </label>
+          <input type="text" id="lastName" v-model.trim="last_name" placeholder="성을 입력해주세요"><br>
 
           <button @click="signUp">시작하기</button>
         </v-card>
@@ -151,6 +161,10 @@ const gender = ref(null)
 const dateDialog = ref(false)
 const date = useDate()
 const today = ref(null)
+
+// 회원가입 3단계 변수들
+const first_name = ref('')
+const last_name = ref('')
 
 const store = useAccountStore()
 
@@ -212,7 +226,9 @@ const signUp = () => {
     password: password.value,
     password2: password2.value,
     birth: birth.value,
-    gender: gender.value
+    gender: gender.value,
+    first_name: first_name.value,
+    last_name: last_name.value
   }
   store.signUp(payload)
 }
@@ -226,13 +242,26 @@ const signUp = () => {
 //   return year + '-' + month + '-' + day
 // }
 
-const dateSelect = () => {
-  console.log('셀렉터 클릭!')
-  console.log(date.getMonth(new Date(today)))
-}
+// const dateSelect = () => {
+//   console.log('셀렉터 클릭!')
+//   console.log(date.getMonth(new Date(today.value)))
+// }
 
 const dateBtnClick = () => {
-  console.log(date.getMonth(new Date(today)))
+  let calendar = date.format(new Date(today.value), 'keyboardDate')
+  let year = date.getYear(new Date(today.value))
+  let month = date.getMonth(new Date(today.value)) + 1
+  console.log(date.getYear(new Date(today.value)))
+  console.log(date.getMonth(new Date(today.value)))
+  // console.log(date.format(new Date(today.value), 'normalDateWithWeekday'))
+  console.log(date.format(new Date(today.value), 'keyboardDate'))
+  // console.log(date.format(new Date(today.value), 'monthAndDate'))
+  // console.log(date.format(new Date(today.value), 'dayOfMonth'))
+  console.log(calendar.slice(3, 5))
+
+  // 날짜 변환
+  birth.value = `${year}-${month}-${calendar.slice(3, 5)}`
+
   dateDialog.value = false
 }
 </script>

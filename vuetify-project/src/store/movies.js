@@ -76,5 +76,80 @@ export const useMovieStore = defineStore('movie', () => {
       })
   }
 
-  return { API_URL, movies, getMovies, writeReview, reviewList, reviews }
+  // 리뷰 수정
+  const reviewControl = function(payload) {
+    console.log('여긴 스토어@@')
+    const { movieId, reviewId, act, rating, content } = payload
+    console.log(act)
+
+    if (act === 'update') {
+      axios({
+        method: 'put',
+        url: `${API_URL}/api/movies/${movieId}/${reviewId}/`,
+        headers: {
+          Authorization: `Bearer ${VueCookies.get('access')}`
+        },
+        data: {
+          rating, content
+        }
+      })
+        .then((res) => {
+          console.log('리뷰 수정 성공!')
+          console.log(res)
+        })
+        .catch((err) => {
+          console.log('리뷰 수정 실패ㅠㅠ')
+          console.log(err)
+        })
+    } else {
+      axios({
+        method: 'delete',
+        url: `${API_URL}/api/movies/${movieId}/${reviewId}/`,
+        headers: {
+          Authorization: `Bearer ${VueCookies.get('access')}`
+        }
+      })
+        .then((res) => {
+          console.log('리뷰 삭제!')
+          console.log(res)
+        })
+        .catch((err) => {
+          console.log('리뷰 삭제 실패')
+          console.log(err)
+        })
+    }
+  }
+
+  // 좋아요, 싫어요!
+  const reviewLikes = function(payload) {
+    console.log(1)
+    console.log(payload)
+    const { review_likes, reviewId } = payload
+    console.log('리뷰 스토어')
+    console.log(review_likes)
+    console.log(reviewId)
+
+    axios({
+      method: 'post',
+      url: `${API_URL}/api/movies/review/${reviewId}/likes/`,
+      headers: {
+        Authorization: `Bearer ${VueCookies.get('access')}`
+      },
+      data: {
+        review_likes
+      }
+    })
+      .then((res) => {
+        console.log('좋아요, 싫어요!')
+        console.log(res)
+      })
+      .catch((err) => {
+        console.log('좋아요, 싫어요 에러!')
+        console.log(err)
+      })
+  }
+
+  return { API_URL, movies, getMovies, writeReview, reviewList, reviews,
+    reviewLikes, reviewControl
+  }
 }, { persist: true })

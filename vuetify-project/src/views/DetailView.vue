@@ -9,7 +9,7 @@
       <div class="detail-body">
         <div>
           <p>관람객 평점</p>
-          <p>{{ movie.vote_average }}</p>
+          <p>{{ movie.vote_average.toFixed(1) }}</p>
           <p>{{ movie.vote_count }}명 참여</p>
         </div>
       </div>
@@ -56,6 +56,7 @@ const rating = ref(3)
 const review = ref(null)
 
 onMounted(() => {
+  store.profile()
   axios({
     method: 'get',
     url: `${movieStore.API_URL}/api/movies/${route.params.id}/`
@@ -90,6 +91,8 @@ const reviewBtnClick = (movieId) => {
   movieStore.writeReview(payload)
   rating.value = 3
   review.value = ''
+  // movieStore.reviewList(movieId)
+  document.location.href = `/detail/${movieId}`
 }
 </script>
 
