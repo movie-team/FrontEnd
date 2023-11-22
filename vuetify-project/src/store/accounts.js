@@ -13,6 +13,8 @@ export const useAccountStore = defineStore('account', () => {
   const ka_token = ref(null)
   const kr_token = ref(null)
   const username = ref(null)
+  const userId = ref(null)
+  const acc = ref(null)
   const router = useRouter()
 
   // 프로필 조회
@@ -28,6 +30,8 @@ export const useAccountStore = defineStore('account', () => {
         console.log('프로필 조회 완료!')
         console.log(res)
         username.value = res.data.username
+        userId.value = res.data.id
+        acc.value = res.data
       })
       .catch((err) => {
         console.log('프로필 조회 실패ㅠㅠ')
@@ -266,8 +270,75 @@ export const useAccountStore = defineStore('account', () => {
       })
   }
 
+  // 회원정보 수정
+  const profileUpdate = function(payload) {
+    const { username, email, birth, gender, first_name, last_name } = payload
+    axios({
+      method: 'put',
+      url: `${API_URL}/api/update/`,
+      headers: {
+        Authorization: `Bearer ${VueCookies.get('access')}`
+      },
+      data: {
+        username, email, birth, gender, first_name, last_name
+      }
+    })
+      .then((res) => {
+        console.log('회원정보 수정!')
+        console.log(res)
+      })
+      .catch((err) => {
+        console.log('회원정보 수정 실패ㅠㅠ')
+        console.log(err)
+      })
+  }
+
+  // 회원 탈퇴
+  const profileDelete = function() {
+    axios({
+      method: 'delete',
+      url: `${API_URL}/api/signout/`,
+      headers: {
+        Authorization: `Bearer ${VueCookies.get('access')}`
+      },
+      data: {
+        'refresh': VueCookies.get('refresh')
+      }
+    })
+      .then((res) => {
+        console.log('회원 탈퇴!')
+        console.log(res)
+      })
+      .catch((err) => {
+        console.log('회원정보 탈퇴 실패ㅠㅠ')
+        console.log(err)
+      })
+  }
+
+  // 비밀번호 변경
+  const PasswordChange = function(password) {
+    axios({
+      method: 'put',
+      url: `${API_URL}/api/password/`,
+      headers: {
+        Authorization: `Bearer ${VueCookies.get('access')}`
+      },
+      data: {
+        password
+      }
+    })
+      .then((res) => {
+        console.log('비밀번호 변경 완료')
+        console.log(res)
+      })
+      .catch((err) => {
+        console.log('비밀번호 변경 실패ㅠㅠ')
+        console.log(err)
+      })
+  }
+
   return {
-    API_URL, signUp, logIn, a_token, r_token, isLogin, logOut, refresh,
-    verify, emailCheck, kakaoLogin, kakaoRefresh, profile, username
+    API_URL, signUp, logIn, a_token, r_token, isLogin, logOut, refresh, profileUpdate, PasswordChange,
+    verify, emailCheck, kakaoLogin, kakaoRefresh, profile, username, userId, acc, profileDelete
   }
 }, { persist: true })

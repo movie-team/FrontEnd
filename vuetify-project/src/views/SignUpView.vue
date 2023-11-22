@@ -121,8 +121,8 @@
           <label for="lastName">성 : </label>
           <input class="signup-input" type="text" id="lastName" v-model.trim="last_name" placeholder="성을 입력해주세요"><br>
 
-          <button v-if="emailPass === 'ok'" class="verification-btn" @click="signUp">시작하기</button>
-          <button v-if="emailPass !== 'ok'" class="disable-btn" @click="signUp" disabled>시작하기</button>
+          <button v-if="emailPass !== 'ok'" class="verification-btn" @click="signUp">시작하기</button>
+          <button v-if="emailPass === 'ok'" class="disable-btn" @click="signUp" disabled>시작하기</button>
         </v-card>
       </template>
     </v-stepper>
