@@ -41,12 +41,13 @@
                 </div>
 
                 <v-sheet color="surface">
-                  <v-otp-input
+                  <!-- <v-otp-input
                     :length="8"
                     v-model="otp"
                     type="password"
                     variant="solo"
-                  ></v-otp-input>
+                  ></v-otp-input> -->
+                  <input class="signup-input" type="password" v-model="otp">
                 </v-sheet>
 
                 <v-btn

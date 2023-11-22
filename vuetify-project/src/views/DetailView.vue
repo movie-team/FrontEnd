@@ -8,9 +8,37 @@
       </div>
       <div class="detail-body">
         <div>
-          <p>관람객 평점</p>
+          <h5>관람객 평점</h5>
           <p>{{ movie.vote_average.toFixed(1) }}</p>
+          <v-rating
+            half-increments
+            hover
+            readonly
+            :length="5"
+            :size="32"
+            :model-value="movie.vote_average.toFixed(1)/2"
+            color="primary"
+            active-color="primary"
+          />
           <p>{{ movie.vote_count }}명 참여</p>
+          <div class="gender-rate">
+            <div class="gender-rate-child">
+              <p>남자</p>
+              <p>{{ movieStore.manRateAvg }}</p>
+            </div>
+            <div class="gender-rate-child">
+              <p>여자</p>
+              <p>{{ movieStore.womanRateAvg }}</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h5>나이별 만족도</h5>
+          <p>10대 {{ movieStore.rateAvg10 }}</p>
+          <p>20대 {{ movieStore.rateAvg20 }}</p>
+          <p>30대 {{ movieStore.rateAvg30 }}</p>
+          <p>40대 {{ movieStore.rateAvg40 }}</p>
+          <p>50대 {{ movieStore.rateAvg50 }}</p>
         </div>
       </div>
     </div>
@@ -37,6 +65,22 @@
         <ReviewList />
       </div>
     </div>
+    <h3>관심사가 비슷한 유저가 본 영화</h3>
+    <div class="recommend-poster">
+      <RecommendItem
+        v-for="movie in movieStore.userRecommendMovies"
+        :key="movie.id"
+        :movie="movie"
+      />
+    </div>
+    <h3>비슷한 장르의 영화</h3>
+    <div class="recommend-poster">
+      <RecommendItem
+        v-for="movie in movieStore.genreRecommendMovies"
+        :key="movie.id"
+        :movie="movie"
+      />
+    </div>
   </div>
 </template>
 
@@ -47,6 +91,7 @@ import { useAccountStore } from '@/store/accounts'
 import { useMovieStore } from '@/store/movies'
 import { useRoute } from 'vue-router'
 import ReviewList from '@/components/ReviewList.vue'
+import RecommendItem from '@/components/RecommendItem.vue'
 
 const store = useAccountStore()
 const movieStore = useMovieStore()
@@ -71,6 +116,10 @@ onMounted(() => {
     console.log(err)
   })
   movieStore.reviewList(route.params.id)
+  movieStore.genreRecommend(route.params.id)
+  movieStore.userRecommend()
+  movieStore.groupRating(route.params.id)
+  movieStore.userGroupRating(route.params.id)
 
   // 토큰 유효성
   store.verify()
@@ -120,9 +169,10 @@ const reviewBtnClick = (movieId) => {
   border: 1px solid rgba(250, 251, 252, 236);
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
+  display: flex;
 }
 .detail-body > div {
-  width: 20%;
+  width: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -158,5 +208,20 @@ const reviewBtnClick = (movieId) => {
 .input-btn {
   width: 60%;
   display: flex;
+}
+.recommend-poster {
+  display: flex;
+  flex-wrap: wrap;
+}
+.gender-rate {
+  width: 60%;
+  padding-top: 10%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.gender-rate-child {
+  display: flex;
+  flex-direction: column;
 }
 </style>

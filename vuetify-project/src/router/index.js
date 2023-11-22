@@ -5,6 +5,9 @@ import HomeView from '@/views/HomeView.vue'
 import SignUpView from '@/views/SignUpView.vue'
 import LogInView from '@/views/LogInView.vue'
 import DetailView from '@/views/DetailView.vue'
+import ProfileView from '@/views/ProfileView.vue'
+import PasswordChange from '@/views/PasswordChange.vue'
+import WorldcupView from '@/views/WorldcupView.vue'
 
 const routes = [
   {
@@ -26,6 +29,21 @@ const routes = [
     path: '/detail/:id',
     name: 'DetailView',
     component: DetailView
+  },
+  {
+    path: '/profile/:id',
+    name: 'ProfileView',
+    component: ProfileView
+  },
+  {
+    path: '/profile/:id/password',
+    name: 'PasswordChange',
+    component: PasswordChange
+  },
+  {
+    path: '/worldcup',
+    name: 'WorldcupView',
+    component: WorldcupView
   },
   // {
   //   path: '/',
