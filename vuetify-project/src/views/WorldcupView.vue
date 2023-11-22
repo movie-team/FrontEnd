@@ -1,7 +1,8 @@
 <template>
   <div>
     <h1>영화 월드컵</h1>
-    <button @click="worldcupStart">월드컵 시작하기</button>
+    <button v-if="!isStart" @click="worldcupStart" class="start-button">월드컵 시작하기</button>
+    <h1 class="round-title" v-if="isStart">{{ round }}</h1>
     <div class="worldcup" v-if="isStart">
       <div>
         <!-- {{ newWorldcup[leftImg].id }} -->
@@ -53,6 +54,7 @@ const right = computed(() => {
 })
 // const newWorldcup = ref([])
 const count = ref(0)
+const round = ref('16강')
 const isStart = ref(false)
 const worldcupList = ref([])
 const newWorldcup = ref([])
@@ -122,6 +124,7 @@ const userChoice = (movie) => {
   // console.log(movieId)
   result.value[movie.id]++
   if (count.value >= 14) {
+    round.value = '결승전!!'
     console.log('하이')
     console.log(result.value)
     axios({
@@ -145,15 +148,16 @@ const userChoice = (movie) => {
   }
   else if(count.value >= 12){
     newWorldcup.value[3].push(movie)
+    round.value = '준결승전!'
   }
   else if(count.value >= 8){
     newWorldcup.value[2].push(movie)
+    round.value = '8강'
     console.log('8강 중')
     console.log(newWorldcup.value[2])
   }
   else {
     newWorldcup.value[1].push(movie)
-    
     console.log('16강 중')
     console.log(newWorldcup.value[1])
     console.log(result.value)
@@ -186,5 +190,24 @@ const userChoice = (movie) => {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.start-button {
+  margin: 20px auto;
+  display: block;
+  padding: 15px 30px; /* 버튼 내부 여백을 조절하여 크기 키우기 */
+  font-size: 1.2em; /* 폰트 크기 조절 */
+  background-color: #3498db; /* 배경색 지정 */
+  color: white; /* 글자색 지정 */
+  border: none; /* 테두리 제거 */
+  border-radius: 8px; /* 둥근 테두리 적용 */
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* 배경색 변경 시 부드러운 효과 */
+}
+.start-button:hover {
+  background-color: #2980b9; /* 마우스 호버 시 배경색 변경 */
+}
+.round-title {
+  text-align: center; /* 텍스트를 가운데 정렬 */
+  margin-top: 10px; /* 상단 여백 추가 */
 }
 </style>

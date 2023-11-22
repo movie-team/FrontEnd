@@ -46,7 +46,7 @@ const logIn = () => {
 <style scoped>
 .login-container {
   width: 40%;
-  height: 60vh;
+  height: 80%;
   border: 1px solid #ccc;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -57,6 +57,7 @@ const logIn = () => {
   margin-top: 50px;
   background-color: #fff;
   padding-top: 20px;
+  padding-bottom: 60px;
 }
 .login-form{
   margin-top: 20px;
