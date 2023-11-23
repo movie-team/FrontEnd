@@ -1,17 +1,37 @@
 <template>
   <div>
     <h1>영화 월드컵</h1>
-    <button v-if="!isStart" @click="worldcupStart" class="start-button">월드컵 시작하기</button>
-    <h1 class="round-title" v-if="isStart">{{ round }}</h1>
-    <div class="worldcup" v-if="isStart">
-      <div>
-        <!-- {{ newWorldcup[leftImg].id }} -->
-        <img @click="userChoice(left)" :src="`https://image.tmdb.org/t/p/w400/${left.poster}`" alt="영화 포스터">
-        <h6>{{ left.overview }}</h6>
+    <div v-if="winner === null">
+      <button v-if="!isStart" @click="worldcupStart" class="start-button">월드컵 시작하기</button>
+      <h1 class="round-title" v-if="isStart">{{ round }}</h1>
+      <div class="worldcup" v-if="isStart">
+        <div>
+          <!-- {{ newWorldcup[leftImg].id }} -->
+          <img @click="userChoice(left)" :src="`https://image.tmdb.org/t/p/w400/${left.poster}`" alt="영화 포스터">
+          <h6>{{ left.overview }}</h6>
+        </div>
+        <div>
+          <img @click="userChoice(right)" :src="`https://image.tmdb.org/t/p/w400/${right.poster}`" alt="영화 포스터">
+          <h6>{{ right.overview }}</h6>
+        </div>
+      </div>
+    </div>
+    <div v-else>
+      <div class="win">
+        <h1>우승!!</h1>
+        <img :src="`https://image.tmdb.org/t/p/w500/${winner.poster}`" alt="우승 포스트">
+        <h6>{{ winner.overview }}</h6>
       </div>
       <div>
-        <img @click="userChoice(right)" :src="`https://image.tmdb.org/t/p/w400/${right.poster}`" alt="영화 포스터">
-        <h6>{{ right.overview }}</h6>
+        <h4>이런 영화는 어때요?</h4>
+        <div class="recommend-movie">
+          <div
+            v-for="recommendMovie in recommendMovies"
+            :key="recommendMovie.id"
+          >
+            <img :src="`https://image.tmdb.org/t/p/w200/${recommendMovie.poster}`" alt="추천 영화">
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -54,6 +74,8 @@ const right = computed(() => {
 })
 // const newWorldcup = ref([])
 const count = ref(0)
+const winner = ref(null)
+const recommendMovies = ref([])
 const round = ref('16강')
 const isStart = ref(false)
 const worldcupList = ref([])
@@ -124,9 +146,9 @@ const userChoice = (movie) => {
   // console.log(movieId)
   result.value[movie.id]++
   if (count.value >= 14) {
-    round.value = '결승전!!'
     console.log('하이')
     console.log(result.value)
+
     axios({
       method: 'post',
       url: `${movieStore.API_URL}/api/movies/worldcup/`,
@@ -134,27 +156,40 @@ const userChoice = (movie) => {
         Authorization: `Bearer ${VueCookies.get('access')}`
       },
       data: {
-        "val": result
+        "val": result.value
       }
     })
       .then((res) => {
         console.log('월드컵 결과 보내기!')
         console.log(res)
+        winner.value = res.data.winner
+        console.log(winner.value)
+        recommendMovies.value = res.data.recommend
       })
       .catch((err) => {
         console.log('월드컵 결과 실패!')
         console.log(err)
       })
   }
+  else if(count.value >= 13){
+    newWorldcup.value[3].push(movie)
+    round.value = '결승전!!'
+  }
   else if(count.value >= 12){
     newWorldcup.value[3].push(movie)
+  }
+  else if(count.value >= 11){
+    newWorldcup.value[2].push(movie)
     round.value = '준결승전!'
   }
   else if(count.value >= 8){
     newWorldcup.value[2].push(movie)
-    round.value = '8강'
     console.log('8강 중')
     console.log(newWorldcup.value[2])
+  }
+  else if(count.value >= 7) {
+    newWorldcup.value[1].push(movie)
+    round.value = '8강'
   }
   else {
     newWorldcup.value[1].push(movie)
@@ -209,5 +244,15 @@ const userChoice = (movie) => {
 .round-title {
   text-align: center; /* 텍스트를 가운데 정렬 */
   margin-top: 10px; /* 상단 여백 추가 */
+}
+.win {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.recommend-movie {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 </style>

@@ -8,6 +8,9 @@ import DetailView from '@/views/DetailView.vue'
 import ProfileView from '@/views/ProfileView.vue'
 import PasswordChange from '@/views/PasswordChange.vue'
 import WorldcupView from '@/views/WorldcupView.vue'
+import TheaterView from '@/views/TheaterView.vue'
+import TicketsView from '@/views/TicketsView.vue'
+import TicketPayView from '@/views/TicketPayView.vue'
 
 const routes = [
   {
@@ -44,6 +47,21 @@ const routes = [
     path: '/worldcup',
     name: 'WorldcupView',
     component: WorldcupView
+  },
+  {
+    path: '/thearter/:id',
+    name: 'TheaterView',
+    component: TheaterView
+  },
+  {
+    path: '/tickets',
+    name: 'TicketsView',
+    component: TicketsView
+  },
+  {
+    path: '/tickets/pay',
+    name: 'TicketPayView',
+    component: TicketPayView
   },
   // {
   //   path: '/',

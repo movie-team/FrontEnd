@@ -40,6 +40,20 @@
           <p>40대 {{ movieStore.rateAvg40 }}</p>
           <p>50대 {{ movieStore.rateAvg50 }}</p>
         </div>
+        <div>
+          <h5>영화 상영 시간</h5>
+          <div
+            class="go-theater"
+            @click="goTheater(theater.id)"
+            v-for="theater in movie.theater_set"
+            :key="theater.id"
+          >
+            <h6>{{ theater.id }}관</h6>
+            <p>남은 좌석 : {{ theater.rest_seat }} / {{ theater.max_seat }}</p>
+            <p>시작 시간 : {{ theater.start }}</p>
+            <p>종료 시간 : {{ theater.end }}</p>
+          </div>
+        </div>
       </div>
     </div>
     <div class="review-box">
@@ -90,12 +104,14 @@ import { onMounted, ref } from 'vue'
 import { useAccountStore } from '@/store/accounts'
 import { useMovieStore } from '@/store/movies'
 import { useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import ReviewList from '@/components/ReviewList.vue'
 import RecommendItem from '@/components/RecommendItem.vue'
 
 const store = useAccountStore()
 const movieStore = useMovieStore()
 const route = useRoute()
+const router = useRouter()
 const movie = ref(null)
 const rating = ref(3)
 const review = ref(null)
@@ -143,6 +159,11 @@ const reviewBtnClick = (movieId) => {
   // movieStore.reviewList(movieId)
   document.location.href = `/detail/${movieId}`
 }
+
+// 좌석 예매 페이지로 ㄱ
+const goTheater = (theaterId) => {
+  router.push({ name: 'TheaterView', params: { id: theaterId } })
+}
 </script>
 
 <style scoped>
@@ -172,7 +193,7 @@ const reviewBtnClick = (movieId) => {
   display: flex;
 }
 .detail-body > div {
-  width: 50%;
+  width: 33%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -223,5 +244,8 @@ const reviewBtnClick = (movieId) => {
 .gender-rate-child {
   display: flex;
   flex-direction: column;
+}
+.go-theater:hover {
+  cursor: pointer;
 }
 </style>

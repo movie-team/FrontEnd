@@ -21,9 +21,8 @@ export const useMovieStore = defineStore('movie', () => {
   const rateAvg30 = ref(null)
   const rateAvg40 = ref(null)
   const rateAvg50 = ref(null)
-  // const worldcupList = ref([])
-  // const result1 = ref([])
-  // const result2 = ref([])
+  const topMovies = ref([])
+  const genres = ref([])
 
   // 영화 목록 받아오기
   const getMovies = function() {
@@ -155,6 +154,7 @@ export const useMovieStore = defineStore('movie', () => {
       .then((res) => {
         console.log('좋아요, 싫어요!')
         console.log(res)
+        console.log(res.data)
       })
       .catch((err) => {
         console.log('좋아요, 싫어요 에러!')
@@ -337,36 +337,45 @@ export const useMovieStore = defineStore('movie', () => {
     }
   }
 
-  // 영화 월드컵
-  // const movieWorldcup = function() {
-  //   axios({
-  //     method: 'get',
-  //     url: `${API_URL}/api/movies/worldcup/`,
-  //     headers: {
-  //       Authorization: `Bearer ${VueCookies.get('access')}`
-  //     },
-  //   })
-  //     .then((res) => {
-  //       console.log('월드컵 데이터!')
-  //       // console.log(res)
-  //       result1.value.length = 0
-  //       result2.value.length = 0
-  //       worldcupList.value = res.data
-  //       console.log(worldcupList.value)
-  //       worldcupList.value.map((prop) => {
-  //         result1.value.push(prop.id)
-  //         result2.value.push(0)
-  //       })
-  //       console.log(result1.value)
-  //       console.log(result2.value)
-  //     })
-  //     .catch((err) => {
-  //       console.log('월드컵 데이터 실패!')
-  //       console.log(err)
-  //     })
-  // }
+  // 영화 탑 10
+  const topTenMovie = function() {
+    axios({
+      method: 'get',
+      url: `${API_URL}/api/movies/popularity/`
+    })
+      .then((res) => {
+        console.log('영화 탑텐!')
+        console.log(res)
+        console.log(res.data)
+        topMovies.value = res.data
+      })
+      .catch((err) => {
+        console.log('탑텐 실패!')
+        console.log(err)
+      })
+  }
 
-  return { API_URL, movies, getMovies, writeReview, reviewList, reviews, userRecommend, groupRating, userGroupRating, rateAvg10, rateAvg20, rateAvg30, rateAvg40,
-    reviewLikes, reviewControl, genreRecommend, genreRecommendMovies, userRecommendMovies, groupRates, manRateAvg, womanRateAvg, rateAvg50
+  // 영화 장르
+  const getGenre = function() {
+    axios({
+      method: 'get',
+      url: `${API_URL}/api/movies/genre/`
+    })
+      .then((res) => {
+        console.log('영화 장르 겟!')
+        console.log(res)
+        console.log(res.data)
+        genres.value = res.data
+      })
+      .catch((err) => {
+        console.log('장르 실패!')
+        console.log(err)
+      })
+  }
+
+  return { API_URL, movies, getMovies, writeReview, reviewList, reviews, getGenre,
+    userRecommend, groupRating, userGroupRating, rateAvg10, rateAvg20, rateAvg30, rateAvg40,
+    reviewLikes, reviewControl, genreRecommend, genreRecommendMovies, genres,
+    userRecommendMovies, groupRates, manRateAvg, womanRateAvg, rateAvg50, topTenMovie, topMovies
   }
 }, { persist: true })
