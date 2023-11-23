@@ -29,11 +29,13 @@
       <input class="profile-input" id="last-name" type="text" v-model="store.acc.last_name">
     </label>
 
-    <label for="tickets" class="profile-label">예약한 티켓 :
-    </label>
+    <label for="tickets" class="profile-label">예약한 티켓 : </label>
     <div v-if="store.acc.ticket_set.length !== 0" id="tickets">
       <ul>
-        <li v-for="ticket in store.acc.ticket_set">
+        <li v-for="ticket in store.acc.ticket_set" :key="ticket.id">
+          <input type="checkbox" v-model="checkedTickets" :value="ticket.id">&nbsp;
+          <span>{{ ticket.seat.theater }}관</span>&nbsp;
+          <span>{{ ticket.seat.num }}석</span>
           {{ ticket }}
         </li>
       </ul>
@@ -41,8 +43,9 @@
     <div v-else id="tickets">
       <span>예약한 티켓 없음</span>
     </div>
-    <button @click="profileUpdate(store.acc.username, store.acc.email, store.acc.birth, store.acc.gender, store.acc.first_name, store.acc.last_name)">회원정보 수정하기</button><br>
-    <button @click="profileDelete">회원 탈퇴하기</button><br>
+    <button @click="ticketCancel">결제 취소</button>
+    <button @click="profileUpdate(store.acc.username, store.acc.email, store.acc.birth, store.acc.gender, store.acc.first_name, store.acc.last_name)">회원정보 수정하기</button>
+    <button @click="profileDelete">회원 탈퇴하기</button>
     <button @click="passwordChange">비밀번호 변경하기</button>
   </div>
   <div v-else class="profile-container">
@@ -84,15 +87,20 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
-import { useAccountStore } from '@/store/accounts'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAccountStore } from '@/store/accounts'
+import { useTheaterStore } from '@/store/theaters'
 
-const store = useAccountStore()
 const router = useRouter()
+const store = useAccountStore()
+const theaterStore = useTheaterStore()
+const checkedTickets = ref([])
+const checkedPayment = ref([])
 
 onMounted(() => {
   store.profile()
+  theaterStore.payment()
 })
 
 const profileUpdate = (username, email, birth, gender, first_name, last_name) => {
@@ -117,6 +125,16 @@ const profileDelete = () => {
 
 const passwordChange = () => {
   router.push({ name: 'PasswordChange', params: { id: store.userId} })
+}
+
+const ticketCancel = () => {
+  console.log('선택한 티켓?')
+  console.log(checkedTickets.value)
+  checkedTickets.value.map((prop) => {
+    checkedPayment.value.push(theaterStore.paymentMaching[`${prop}`])
+  })
+  console.log(checkedPayment.value)
+  theaterStore.ticketCancel(checkedPayment.value, store.userId)
 }
 </script>
 
