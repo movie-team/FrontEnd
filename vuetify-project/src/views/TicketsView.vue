@@ -22,9 +22,11 @@
 <script setup>
 import { useTheaterStore } from '@/store/theaters'
 import { useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 
 const theaterStore = useTheaterStore()
 const router = useRouter()
+const route = useRoute()
 
 const deleteAll = (theaterId) => {
   theaterStore.allTicketDelete()
@@ -36,7 +38,7 @@ const ticketDelete = (seatId) => {
 }
 
 const ticketPay = () => {
-  theaterStore.ticketPay()
+  theaterStore.ticketPay(route.params.id)
 }
 </script>
 

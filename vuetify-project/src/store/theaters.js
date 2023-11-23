@@ -124,7 +124,7 @@ export const useTheaterStore = defineStore('theater', () => {
   }
 
   // 티켓 결제 요청
-  const ticketPay = function() {
+  const ticketPay = function(theaterId) {
     axios({
       method: 'post',
       url: `${API_URL}/api/movies/ticket/pay/`,
@@ -142,6 +142,7 @@ export const useTheaterStore = defineStore('theater', () => {
       .catch((err) => {
         console.log('티켓 결제 요청 실패')
         console.log(err)
+        router.push({ name: 'TheaterView', params: { id: theaterId } })
       })
   }
 

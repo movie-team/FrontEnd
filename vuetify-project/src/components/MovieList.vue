@@ -26,6 +26,22 @@
       />
     </div>
     <div>
+      <div
+        class="genres"
+        v-for="genre in store.genres"
+        :key="genre.id"
+      >
+        <h3>{{ genre.name }}</h3>
+        <div>
+          <MovieItem
+            v-for="movie in genre.movies"
+            :key="movie.id"
+            :movie="movie"
+          />
+        </div>
+      </div>
+    </div>
+    <div>
       <MovieItem
         v-for="movie in store.movies"
         :key="movie.id"
@@ -78,5 +94,9 @@ a {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+}
+.genres {
+  display: flex;
+  flex-direction: column;
 }
 </style>
