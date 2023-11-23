@@ -167,6 +167,9 @@ export const useAccountStore = defineStore('account', () => {
         VueCookies.remove('kaccess')
         VueCookies.remove('krefresh')
 
+        // 로컬스토리지 초기화
+        localStorage.clear()
+
         // 로그아웃 후 메인 페이지로 이동
         router.push({ name: 'home' })
         alert('로그아웃 했습니다.')
