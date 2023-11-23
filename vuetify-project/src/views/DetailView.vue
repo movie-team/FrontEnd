@@ -24,21 +24,41 @@
           <div class="gender-rate">
             <div class="gender-rate-child">
               <p>남자</p>
-              <p>{{ movieStore.manRateAvg }}</p>
+              <v-rating
+                half-increments
+                hover
+                readonly
+                :length="5"
+                :size="20"
+                :model-value="movieStore.manRateAvg.toFixed(1)/2"
+                color="primary"
+                active-color="primary"
+              />
+              <p>{{ movieStore.manRateAvg.toFixed(1) }}</p>
             </div>
             <div class="gender-rate-child">
               <p>여자</p>
-              <p>{{ movieStore.womanRateAvg }}</p>
+              <v-rating
+                half-increments
+                hover
+                readonly
+                :length="5"
+                :size="20"
+                :model-value="movieStore.womanRateAvg.toFixed(1)/2"
+                color="primary"
+                active-color="primary"
+              />
+              <p>{{ movieStore.womanRateAvg.toFixed(1) }}</p>
             </div>
           </div>
         </div>
         <div>
           <h5>나이별 만족도</h5>
-          <p>10대 {{ movieStore.rateAvg10 }}</p>
-          <p>20대 {{ movieStore.rateAvg20 }}</p>
-          <p>30대 {{ movieStore.rateAvg30 }}</p>
-          <p>40대 {{ movieStore.rateAvg40 }}</p>
-          <p>50대 {{ movieStore.rateAvg50 }}</p>
+          <p>10대 {{ movieStore.rateAvg10.toFixed(1) }}</p>
+          <p>20대 {{ movieStore.rateAvg20.toFixed(1) }}</p>
+          <p>30대 {{ movieStore.rateAvg30.toFixed(1) }}</p>
+          <p>40대 {{ movieStore.rateAvg40.toFixed(1) }}</p>
+          <p>50대 {{ movieStore.rateAvg50.toFixed(1) }}</p>
         </div>
         <div>
           <h5>영화 상영 시간</h5>
@@ -50,8 +70,7 @@
           >
             <h6>{{ theater.id }}관</h6>
             <p>남은 좌석 : {{ theater.rest_seat }} / {{ theater.max_seat }}</p>
-            <p>시작 시간 : {{ theater.start }}</p>
-            <p>종료 시간 : {{ theater.end }}</p>
+            <p>상영 시간 : {{ theater.start.slice(0, 5) }} ~ {{ theater.end.slice(0, 5) }}</p>
           </div>
         </div>
       </div>
@@ -235,7 +254,7 @@ const goTheater = (theaterId) => {
   flex-wrap: wrap;
 }
 .gender-rate {
-  width: 60%;
+  width: 90%;
   padding-top: 10%;
   display: flex;
   flex-direction: row;
@@ -244,6 +263,8 @@ const goTheater = (theaterId) => {
 .gender-rate-child {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  margin: 0 10px;
 }
 .go-theater:hover {
   cursor: pointer;

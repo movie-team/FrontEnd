@@ -11,6 +11,7 @@ import WorldcupView from '@/views/WorldcupView.vue'
 import TheaterView from '@/views/TheaterView.vue'
 import TicketsView from '@/views/TicketsView.vue'
 import TicketPayView from '@/views/TicketPayView.vue'
+import PasswordFindView from '@/views/PasswordFindView.vue'
 
 const routes = [
   {
@@ -63,6 +64,11 @@ const routes = [
     name: 'TicketPayView',
     component: TicketPayView
   },
+  {
+    path: '/login/password',
+    name: 'PasswordFindView',
+    component: PasswordFindView
+  },
   // {
   //   path: '/',
   //   component: () => import('@/layouts/default/Default.vue'),
@@ -85,16 +91,20 @@ const router = createRouter({
 })
 
 // 비로그인 사용자의 메인 페이지 접근 제한
-// router.beforeEach((to, from) => {
-//   const store = useAccountStore()
-//   if (to.name === 'home' && !store.isLogin) {
-//     window.alert('로그인 해주세요.')
-//     return { name: 'LogInView' }
-//   }
-//   if ((to.name === 'SignUpView' || to.name === 'LogInView') && (store.isLogin)) {
-//     window.alert('이미 로그인했습니다.')
-//     return { name: 'home' }
-//   }
-// })
+router.beforeEach((to, from) => {
+  const store = useAccountStore()
+  // if (to.name === 'home' && !store.isLogin) {
+  //   window.alert('로그인 해주세요.')
+  //   return { name: 'LogInView' }
+  // }
+  if ((to.name === 'SignUpView' || to.name === 'LogInView') && (store.isLogin)) {
+    // window.alert('이미 로그인했습니다.')
+    return { name: 'home' }
+  }
+  // if ((to.name === 'ProfileView' || to.name === 'DetailView' || to.name === 'PasswordChange' || to.name === 'TheaterView'
+  //     || to.name === 'TicketsView' || to.name === 'TicketPayView' || to.name === 'PasswordFindView' && (!store.isLogin))) {
+  //   return { name: 'home' }
+  // }
+})
 
 export default router
