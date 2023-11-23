@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="worldcup-container">
     <h1>영화 월드컵</h1>
     <div v-if="winner === null">
       <button v-if="!isStart" @click="worldcupStart" class="start-button">월드컵 시작하기</button>
@@ -215,13 +215,18 @@ const userChoice = (movie) => {
 </script>
 
 <style scoped>
+.worldcup-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .worldcup {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
 }
 .worldcup > div {
-  width: 50%;
+  width: 45%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -254,5 +259,11 @@ const userChoice = (movie) => {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+}
+img:hover {
+  cursor: pointer;
+}
+.recommend-movie img:hover {
+  transform: scale(1.1);
 }
 </style>

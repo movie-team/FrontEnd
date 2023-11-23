@@ -2,17 +2,20 @@
   <div class="login-container">
     <h1>로그인</h1>
     <form class="login-form" @submit.prevent="logIn">
-      <label class="login-label" for="username">유저네임 : </label>
-      <input class="login-input" type="text" id="username" v-model.trim="username" placeholder="유저네임"><br>
+      <label class="login-label" for="username">유저네임 :
+        <input class="login-input" type="text" id="username" v-model.trim="username" placeholder="유저네임">
+      </label>
 
       <!-- <label for="email">이메일 : </label>
       <input type="email" id="email" v-model.trim="email" placeholder="이메일 주소"><br> -->
 
-      <label class="login-label" for="password">비밀번호 : </label>
-      <input class="login-input" type="password" id="password" v-model.trim="password" placeholder="비밀번호"><br>
-
+      <label class="login-label" for="password">비밀번호 :
+        <input class="login-input" type="password" id="password" v-model.trim="password" placeholder="비밀번호">
+      </label>
+      
       <button class="login-btn">로그인</button>
     </form>
+    <a href="/login/password">비밀번호가 기억나지 않으세요?</a>
     <div class="social-container">
       <br>
       <hr>

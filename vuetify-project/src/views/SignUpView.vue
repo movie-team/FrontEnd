@@ -32,13 +32,12 @@
                 max-width="400"
                 width="100%"
               >
-                <h3 class="text-h6 mb-4">Verify Your Account</h3>
+              <h3 class="text-h6 mb-4">이메일을 확인해주세요!</h3>
 
-                <div class="text-body-2">
-                  We sent a verification code to john..@gmail.com <br>
-
-                  Please check your email and paste the code below.
-                </div>
+              <div class="text-body-2">
+                입력하신 이메일주소로 코드를 보냈습니다.<br>
+                이메일을 확인하시고 코드를 같이 입력해주세요.
+              </div>
 
                 <v-sheet color="surface">
                   <!-- <v-otp-input
@@ -60,7 +59,7 @@
                 ></v-btn>
 
                 <div class="text-caption">
-                  Didn't receive the code? <a href="#" @click.prevent="otp = ''">Resend</a>
+                  코드를 받지 못 했나요? <a href="#" @click.prevent="otp = ''">다시 보내기</a>
                 </div>
               </v-card>
             </v-dialog>
@@ -72,7 +71,15 @@
           
           <label for="password2">비밀번호 확인 :
             <input class="signup-input" type="password" id="password2" v-model.trim="password2" placeholder="비밀번호 확인" required>
-          </label><br>
+          </label>
+
+          <!-- 비밀번호 일치 여부를 확인하고 빨간 경고 메시지를 표시합니다. -->
+          <div v-if="password !== password2" style="color: red;">
+            비밀번호가 일치하지 않습니다.
+          </div>
+          <div v-else style="color: blue;">
+            비밀번호가 일치합니다.
+          </div>
         </v-card>
       </template>
 
@@ -122,8 +129,8 @@
           <label for="lastName">성 : </label>
           <input class="signup-input" type="text" id="lastName" v-model.trim="last_name" placeholder="성을 입력해주세요"><br>
 
-          <button v-if="emailPass !== 'ok'" class="verification-btn" @click="signUp">시작하기</button>
-          <button v-if="emailPass === 'ok'" class="disable-btn" @click="signUp" disabled>시작하기</button>
+          <button v-if="emailPass === 'ok'" class="verification-btn" @click="signUp">시작하기</button>
+          <button v-if="emailPass !== 'ok'" class="disable-btn" @click="signUp" disabled>시작하기</button>
         </v-card>
       </template>
     </v-stepper>
@@ -135,14 +142,6 @@
     </a>
   </div>
 </template>
-
-<!-- <script>
-export default {
-  data: () => ({
-    otp: '',
-  }),
-}
-</script> -->
 
 <script setup>
 import { ref } from 'vue'
@@ -249,7 +248,11 @@ const dateBtnClick = () => {
   console.log(calendar.slice(3, 5))
 
   // 날짜 변환
-  birth.value = `${year}-${month}-${calendar.slice(3, 5)}`
+  if (calendar.slice(3, 4) === '0') {
+    birth.value = `${year}-${month}-${calendar.slice(4, 5)}`
+  } else {
+    birth.value = `${year}-${month}-${calendar.slice(3, 5)}`
+  }
 
   dateDialog.value = false
 }

@@ -117,6 +117,9 @@ export const useAccountStore = defineStore('account', () => {
 
         // 로그인 후 메인 페이지로 이동
         router.push({ name: 'home' })
+        setTimeout(() => {
+          location.reload()
+        }, 500);
       })
       .catch((err) => {
         console.log(err)
@@ -136,6 +139,10 @@ export const useAccountStore = defineStore('account', () => {
       VueCookies.set('access', urlSearch.get('a'), '30M')
       VueCookies.set('refresh', urlSearch.get('r'), '7d')
     }
+    router.push({ name: 'home' })
+    setTimeout(() => {
+      location.reload()
+    }, 500);
   }
 
   // 사용자 로그인 여부 확인
@@ -172,7 +179,10 @@ export const useAccountStore = defineStore('account', () => {
 
         // 로그아웃 후 메인 페이지로 이동
         router.push({ name: 'home' })
-        alert('로그아웃 했습니다.')
+        setTimeout(() => {
+          alert('로그아웃 했습니다.')
+          location.reload()
+        }, 500);
       })
       .catch((err) => {
         console.log('일반 로그아웃으로 들어가?')
@@ -183,12 +193,15 @@ export const useAccountStore = defineStore('account', () => {
       console.log('토큰 어디갔어')
       console.log(VueCookies.get('kaccess'))
       r_token.value = VueCookies.get('refresh')
-
+      
       // 쿠키 초기화
       VueCookies.remove('access')
       VueCookies.remove('refresh')
       VueCookies.remove('kaccess')
       VueCookies.remove('krefresh')
+
+      // 로컬스토리지 초기화
+      localStorage.clear()
 
       document.location.href = `${API_URL}/accounts/kakao/signout/`
     }
@@ -289,6 +302,7 @@ export const useAccountStore = defineStore('account', () => {
       .then((res) => {
         console.log('회원정보 수정!')
         console.log(res)
+        location.reload()
       })
       .catch((err) => {
         console.log('회원정보 수정 실패ㅠㅠ')
@@ -311,6 +325,16 @@ export const useAccountStore = defineStore('account', () => {
       .then((res) => {
         console.log('회원 탈퇴!')
         console.log(res)
+
+        // 쿠키 초기화
+        VueCookies.remove('access')
+        VueCookies.remove('refresh')
+        VueCookies.remove('kaccess')
+        VueCookies.remove('krefresh')
+
+        // 로컬스토리지 초기화
+        localStorage.clear()
+        router.push({ name: 'home' })
       })
       .catch((err) => {
         console.log('회원정보 탈퇴 실패ㅠㅠ')
@@ -340,8 +364,51 @@ export const useAccountStore = defineStore('account', () => {
       })
   }
 
+  // 비밀번호 초기화를 위한 이메일 인증
+  const resetPassword = function(username) {
+    axios({
+      method: 'post',
+      url: `${API_URL}/api/password/reset/`,
+      data: {
+        username
+      }
+    })
+      .then((res) => {
+        console.log('비밀번호 초기화 요청!')
+        console.log(res)
+        console.log(res.data)
+      })
+      .catch((err) => {
+        console.log('비밀번호 초기화 실패ㅠㅠ')
+        console.log(err)
+      })
+  }
+
+  // 비밀번호 초기화하고 새 비밀번호 설정
+  const newPassword = function(payload) {
+    const { token, password, username } = payload
+    axios({
+      method: 'post',
+      url: `${API_URL}/api/password/reset/confirm/`,
+      data: {
+        token, password, username
+      }
+    })
+      .then((res) => {
+        console.log('새 비밀번호 설정!')
+        console.log(res)
+        console.log(res.data)
+        alert('비밀번호 설정이 완료됐습니다.')
+        router.push({ name: 'LogInView' })
+      })
+      .catch((err) => {
+        console.log('새 비밀번호 설정 실패ㅠㅠ')
+        console.log(err)
+      })
+  }
+
   return {
-    API_URL, signUp, logIn, a_token, r_token, isLogin, logOut, refresh, profileUpdate, PasswordChange,
-    verify, emailCheck, kakaoLogin, kakaoRefresh, profile, username, userId, acc, profileDelete
+    API_URL, signUp, logIn, a_token, r_token, isLogin, logOut, refresh, profileUpdate, PasswordChange, newPassword,
+    verify, emailCheck, kakaoLogin, kakaoRefresh, profile, username, userId, acc, profileDelete, resetPassword
   }
 }, { persist: true })
